@@ -19,7 +19,9 @@
   },
   "name":"Blank Pixel Game",
   "resources":[
+    {"id":{"name":"obj_hamster","path":"objects/obj_hamster/obj_hamster.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"s_hamster","path":"sprites/s_hamster/s_hamster.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
