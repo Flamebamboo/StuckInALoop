@@ -1,74 +1,97 @@
-// 1) Move toward target if moving
-if (state == "MOVING") {
-    var dist = point_distance(x, y, target_x, target_y);
-
-    if (dist <= move_speed) {
-        x = target_x;
-        y = target_y;
-        moving = false;
-
-        // Arrived: choose new state based on station
-        if (!instance_exists(target_inst)) {
-            state = "SLEEP";
-        } else if (target_inst.object_index == obj_wheel) {
-            state = "WHEEL_READY";
-            wheel_speed = 0; // reset run speed when arriving (optional)
-        } else if (target_inst.object_index == obj_water) {
-            state = "DRINK";
-        } else if (target_inst.object_index == obj_bed) {
-            state = "SLEEP";
-        } else {
-            state = "SLEEP";
-        }
-    } else {
-        var dir = point_direction(x, y, target_x, target_y);
-        x += lengthdir_x(move_speed, dir);
-        y += lengthdir_y(move_speed, dir);
-    }
-}
-
-// 2) Wheel behavior: hold LMB to run (rotate around wheel center)
+// -------------------- WHEEL --------------------
 if (state == "WHEEL_READY" || state == "WHEEL_RUN") {
-    if (!instance_exists(target_inst) || target_inst.object_index != obj_wheel) {
+    if (!instance_exists(target_inst) || target_inst.object_index != Object4) {
         state = "SLEEP";
+        target_inst = noone;
+        image_angle = 0;
     } else {
         var holding = mouse_check_button(mb_left);
 
-        // accelerate while holding, otherwise slow down
         if (holding) {
-            wheel_speed = min(wheel_speed + wheel_accel, wheel_speed_max);
+            wheel_speed += wheel_accel;
+
+            if (wheel_speed >= wheel_crazy_threshold) {
+                wheel_speed += wheel_crazy_accel;
+            }
+
+            wheel_speed = min(wheel_speed, wheel_crazy_max);
             state = "WHEEL_RUN";
+
+            wheel_angle += wheel_speed;
+
+            var gravity_fight = (1 - (wheel_speed / wheel_crazy_max)) * 0.25;
+            var diff = angle_difference(wheel_bottom_angle, wheel_angle);
+            wheel_angle += diff * gravity_fight;
+
         } else {
-            wheel_speed = max(wheel_speed - wheel_drag, 0);
-            if (wheel_speed == 0) state = "WHEEL_READY";
+            wheel_speed *= 0.92;
+
+            if (wheel_speed < 0.01) {
+                wheel_speed = 0;
+                state = "WHEEL_READY";
+            }
+
+            wheel_angle += wheel_speed;
+
+            var gravity_strength = (1 - (wheel_speed / wheel_crazy_max)) * 0.12;
+            var diff = angle_difference(wheel_bottom_angle, wheel_angle);
+
+            if (abs(diff) < 0.3 && wheel_speed == 0) {
+                wheel_angle = wheel_bottom_angle;
+            } else {
+                wheel_angle += diff * gravity_strength;
+            }
         }
 
-        // rotate hamster around wheel center
-        wheel_angle += wheel_speed;
+        // --- Keep angle in 0..360 ---
+        wheel_angle = ((wheel_angle mod 360) + 360) mod 360;
 
+        // --- Position hamster on rim ---
         var cx = target_inst.x;
         var cy = target_inst.y;
 
         x = cx + lengthdir_x(wheel_radius, wheel_angle);
         y = cy + lengthdir_y(wheel_radius, wheel_angle);
 
-        // Optional: make hamster face direction of motion
-        // image_angle = wheel_angle + 90;
-    }
+        // --- Rotation ---
+        if (wheel_speed == 0 && wheel_angle == wheel_bottom_angle) {
+            image_angle = 0;
+        } else if (wheel_rotate_hamster) {
+            image_angle = wheel_angle + wheel_upright_offset;
+        } else {
+            image_angle = 0;
+        }
+
+        // --- Animation (MUST be inside else block) ---
+        if (wheel_speed > 0.01) {
+            if (sprite_index != sprite_run) {
+                sprite_index = sprite_run;
+                image_index = 0;
+            }
+
+            var speed_ratio = wheel_speed / wheel_crazy_max;
+            image_speed = 0.1 + (speed_ratio * 1.5);
+        } else {
+            sprite_index = sprite_idle;
+            image_speed = 0;
+            image_index = 0;
+        }
+    }  // <-- end of else (target_inst exists)
 }
 
-// 3) Drink behavior (simple example: drink while holding)
+// -------------------- DRINK --------------------
 if (state == "DRINK") {
-    // If you want: hold to keep drinking, release to stop
     if (!mouse_check_button(mb_left)) {
-        // go idle/sleep when not holding, or stay at water
         state = "SLEEP";
+        target_inst = noone;
+        image_angle = 0;
     }
-
-    // TODO: thirst -= ...
 }
 
-// 4) Sleep state does nothing (or regen)
+// -------------------- SLEEP --------------------
 if (state == "SLEEP") {
-    // TODO: maybe reduce thirst slowly, or regain energy
+    image_angle = 0;
+    sprite_index = sprite_idle;
+    image_speed = 0;
+    image_index = 0;
 }

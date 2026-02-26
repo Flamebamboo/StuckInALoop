@@ -28,9 +28,9 @@
   "resourceVersion":"2.0",
   "solid":true,
   "spriteId":{
-    "name":"Sprite2",
-    "path":"sprites/Sprite2/Sprite2.yy",
+    "name":"Sprite8",
+    "path":"sprites/Sprite8/Sprite8.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

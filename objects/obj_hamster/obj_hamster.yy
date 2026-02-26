@@ -37,8 +37,8 @@
   "resourceVersion":"2.0",
   "solid":true,
   "spriteId":{
-    "name":"s_hamster",
-    "path":"sprites/s_hamster/s_hamster.yy",
+    "name":"s_hamster_run",
+    "path":"sprites/s_hamster_run/s_hamster_run.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -1,9 +1,9 @@
 {
   "$GMObject":"",
-  "%Name":"obj_wheel",
+  "%Name":"Object4",
   "eventList":[],
   "managed":true,
-  "name":"obj_wheel",
+  "name":"Object4",
   "overriddenProperties":[],
   "parent":{
     "name":"Object",
@@ -28,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"Sprite3",
-    "path":"sprites/Sprite3/Sprite3.yy",
+    "name":"Sprite5",
+    "path":"sprites/Sprite5/Sprite5.yy",
   },
   "spriteMaskId":null,
   "visible":true,

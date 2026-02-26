@@ -1,20 +1,30 @@
-move_speed = 4;
-
+move_speed = 10;
 target_x = x;
 target_y = y;
 moving = false;
 
-state = "SLEEP";      // "SLEEP", "MOVING", "WHEEL_READY", "WHEEL_RUN", "DRINK"
+sleep_x = 170;
+sleep_y = 290;
+drink_x = 87;
+drink_y = 290;
+
+state = "SLEEP";
 target_inst = noone;
 
-// wheel running
 wheel_angle = 0;
-wheel_speed = 0;      // how fast we rotate
-wheel_accel = 0.15;
-wheel_speed_max = 20;
-wheel_drag = 0.25;    // how fast it slows when not holding
-wheel_radius = 18;    // distance from wheel center (tweak)
+wheel_speed = 0;
 
-// optional: where hamster should stand at each station
-station_offset_x = 0;
-station_offset_y = 0;
+wheel_accel = 0.01;
+wheel_crazy_threshold = 8;
+wheel_crazy_accel = 0.35;
+wheel_crazy_max = 20;
+
+wheel_radius = 50;
+
+wheel_rotate_hamster = true;
+wheel_bottom_angle = 270;
+wheel_upright_offset = 90;
+
+
+sprite_idle = s_hamster_sleep;
+sprite_run  = s_hamster_run;
